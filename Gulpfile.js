@@ -5,7 +5,8 @@ var babelify = require('babelify');
 var browserify = require('browserify');
 var browserSync = require('browser-sync').create();
 var source = require('vinyl-source-stream');
-var sass = require('gulp-sass');
+var buffer = require('vinyl-buffer');
+var sass = require('gulp-sass')(require('sass'));
 
 var isProduction = process.env.NODE_ENV === 'production';
 
@@ -40,36 +41,58 @@ function bundle() {
             this.emit("end");
         })
         .pipe(source('bundle.js'))
-        .pipe(gulp.dest('./src/dist'))
+        .pipe(buffer())
+        .pipe(gulp.dest('./src/dist/'))
         .pipe(browserSync.stream({once: true}));
 }
 
 // Gulp task aliases
 
+// gulp.task('bundle', function() {
+//     return bundle();
+// });
+
 gulp.task('bundle', function() {
-    return bundle();
+    var b = browserify({
+        entries: './src/js/app.js',
+        debug: !isProduction
+    });
+    
+    b.transform(babelify.configure({
+        sourceMapRelative: 'src/js',
+        presets: ['es2015', 'react']
+    }));
+    
+    b.transform('envify');
+    
+    if (isProduction) {
+        b.transform({
+            global: true,
+            ignore: ['**/jutsu/lib/**']
+        }, 'uglifyify');
+    }
+    
+    return b.bundle()
+        .on('error', function(err) {
+            gutil.log(err.message);
+            this.emit('end');
+        })
+        .pipe(source('bundle.js'))
+        .pipe(buffer())
+        .pipe(gulp.dest('./src/dist/'));
 });
 
 gulp.task('sass', function() {
     return gulp.src('./src/scss/*.scss')
         .pipe(sass({
-            outputStyle: 'compressed',
-            noCache: true
-        }))
-        .on('error', function(err) {
-            gutil.log(err.message);
-        })
+            outputStyle: 'compressed'
+        }).on('error', sass.logError))
         .pipe(gulp.dest('./src/dist'))
         .pipe(browserSync.stream({once: true}));
 });
 
 // Bundle and serve page
-gulp.task('default', ['sass', 'bundle'], function() {
-    gulp.watch('./src/scss/*.scss', ['sass']);
-    browserSync.init({
-        server: './src'
-    });
-});
+gulp.task('default', gulp.series('sass', 'bundle'));
 
 /*
  * Testing

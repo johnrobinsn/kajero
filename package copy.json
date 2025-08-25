@@ -20,11 +20,6 @@
   },
   "homepage": "https://github.com/JoelOtter/kajero",
   "dependencies": {
-    "gulp": "^5.0.1",
-    "gulp-jsx-coverage": "^0.4.0",
-    "gulp-sass": "^6.0.1",
-    "gulp-util": "^3.0.8",
-    "kajero": "^0.2.0",
     "request": "^2.72.0"
   },
   "devDependencies": {
@@ -41,6 +36,10 @@
     "fetch-mock": "^4.4.0",
     "font-awesome": "^4.5.0",
     "front-matter": "^2.0.6",
+    "gulp": "^3.9.1",
+    "gulp-jsx-coverage": "^0.3.8",
+    "gulp-sass": "^2.2.0",
+    "gulp-util": "^3.0.7",
     "highlight.js": "^9.2.0",
     "immutable": "^3.7.6",
     "jsdom": "^8.4.0",
@@ -57,17 +56,13 @@
     "redux-mock-store": "^1.0.2",
     "redux-thunk": "^2.0.1",
     "reshaper": "^0.3.1",
-    "sass": "^1.90.0",
     "sinon": "^1.17.3",
     "smolder": "^0.3.1",
     "uglifyify": "^3.0.1",
-    "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0",
     "whatwg-fetch": "^0.11.0"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register --recursive \"./src/**/*-spec.js\"",
-    "test-cov": "./node_modules/.bin/gulp test-cov"
   }
 }
